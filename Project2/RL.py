@@ -59,7 +59,9 @@ def learn_Q(env, n_sims, gamma = 1, omega = 0.77, epsilon = 0.05,
     #######################################################################
             # YOUR CODE HERE
             # Compute the learning rate and update the Q-function 
-
+            c = 1
+            alpha = c*state_action_count[state][action]**-omega
+            Q[state][action]=Q[state][action]+alpha*(action_reward+gamma*max(Q[state2][:]-Q[state][action]))
 
 
     #######################################################################
@@ -192,9 +194,30 @@ def learn_MC(env, n_sims, gamma = 1, epsilon = 0.05,
      #################################################################### 
         # YOUR CODE HERE
             # Update avg_reward
-            # Update the Q-function for each visited state/action pair. 
+        avg_reward= avg_reward + (1 / episode)*(episode_reward-avg_reward)
         
+        for state in episode_state_action_count:
+            a = np.argmax(episode_state_action_count[state])
+            Q[state][a] += (1/state_action_count[state][a]) * (episode_reward-Q[state][a])
 
-        
+
+            # avg_reward= avg_reward + (1 / episode)*(action_reward-avg_reward)
+            # #print(avg_reward)
+            # G=0 # Since gamma = 1 and we only care about last state we only use the last episode reward
+            # #for k in(range(K)):
+            # #    G=G+gamma**k*episode_reward
+            # #G=disc
+            # #Q[state][action]=Q[state][action]+ (1/state_action_count[state][action]*(episode_reward- Q[state][action]))
+            
+            #     # Update avg_reward
+            #     # Update the Q-function for each visited state/action pair. 
+            # for state in episode_state_action_count:
+            #     #goes through states
+            #     for action in episode_state_action_count[state]:
+            #         #goes through action
+            #         if episode_state_action_count[state][action]==1 :
+                        
+            #             Q[state][action]=Q[state][action]+ (1/state_action_count[state][action]*(episode_reward- Q[state][action]))
+
     #################################################################### 
     return Q, avg_reward, state_action_count
